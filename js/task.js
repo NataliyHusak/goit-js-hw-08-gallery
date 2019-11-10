@@ -3,12 +3,7 @@
 import images from "./gallery-items.js";
 
 const gallery = document.querySelector(".js-gallery");
-const lightbox = document.querySelector(".js-lightbox");
-const lighrboxImage = lightbox.querySelector(".lightbox__image");
-const closeModalBtn = lightbox.querySelector(
-  '.lightbox__button[data-action="close-lightbox"]'
-);
-const lightboxBackdrop = lightbox.querySelector(".lightbox__content");
+
 function createGalleryItem({ preview, original, description }) {
   const galleryItem = `
   <li class="gallery__item">
@@ -32,9 +27,18 @@ function createGalleryItem({ preview, original, description }) {
   return galleryItem;
 }
 
+const imagesGallery = document.querySelectorAll(".gallery img");
+imagesGallery.forEach(image => {
+  imageLoad(image);
+});
+
 function createGallery(imagesList) {
   return imagesList.map(image => createGalleryItem(image)).join("");
 }
+
+const lightbox = document.querySelector(".js-lightbox");
+const lightboxImage = lightbox.querySelector(".lightbox__image");
+
 const markup = createGallery(images);
 
 gallery.insertAdjacentHTML("afterbegin", markup);
@@ -45,17 +49,17 @@ function handleOpenModal(event) {
     return;
   }
   lightbox.classList.add("is-open");
-  const sourceWay = event.target.getAttribute("data-source");
+  const sourceData = event.target.getAttribute("data-source");
   const deccription = event.target.getAttribute("alt");
-  lighrboxImage.setAttribute("src", sourceWay);
-  lighrboxImage.setAttribute("alt", deccription);
+  lightboxImage.setAttribute("src", sourceData);
+  lightboxImage.setAttribute("alt", deccription);
   window.addEventListener("keydown", handleKeyPress);
 }
 function handleCloseModal() {
   lightbox.classList.remove("is-open");
   window.removeEventListener("keydown", handleKeyPress);
-  lighrboxImage.setAttribute("src", " ");
-  lighrboxImage.setAttribute("alt", " ");
+  lightboxImage.setAttribute("src", " ");
+  lightboxImage.setAttribute("alt", " ");
 }
 function handleClickOverlay({ target, currentTarget }) {
   if (target !== currentTarget) {
@@ -70,8 +74,14 @@ function handleKeyPress({ code }) {
   handleCloseModal();
 }
 
+const closeModalbutton = lightbox.querySelector(
+  '.lightbox__button[data-action="close-lightbox"]'
+);
+
+const lightboxBackdrop = lightbox.querySelector(".lightbox__content");
+
 gallery.addEventListener("click", handleOpenModal);
-closeModalBtn.addEventListener("click", handleCloseModal);
+closeModalbutton.addEventListener("click", handleCloseModal);
 lightboxBackdrop.addEventListener("click", handleClickOverlay);
 
 const imageLoad = target => {
@@ -85,7 +95,3 @@ const imageLoad = target => {
   });
   element.observe(target);
 };
-const imagesGallery = document.querySelectorAll(".gallery img");
-imagesGallery.forEach(image => {
-  imageLoad(image);
-});
